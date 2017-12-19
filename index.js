@@ -1,27 +1,8 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var helper = require('./helper.js');
 var port = process.env.PORT || 3000;
-
-/* LIB START */
-function getDistanceFromLatLonInKm(pos1, pos2) {
-	var R = 6371; // Radius of the earth in km
-	var dLat = deg2rad(pos2.lat-pos1.lat);  // deg2rad below
-	var dLon = deg2rad(pos2.lng-pos1.lng); 
-	var a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(deg2rad(pos1.lat)) * Math.cos(deg2rad(pos2.lat)) * Math.sin(dLon/2) * Math.sin(dLon/2); 
-	var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
-	var d = R * c; // Distance in km
-	return d;
-}
-function deg2rad(deg) {
-	return deg * (Math.PI/180)
-}
-function interpolate(pos1, pos2, section) { // section between 0 and 1
-	var lat = pos1.lat + (section * (pos2.lat-pos1.lat));
-	var lng = pos1.lng + (section * (pos2.lng-pos1.lng));
-	return {lat: lat, lng: lng};
-}
-/* LIB END */
 
 app.get('/', function(req, res){
 	res.sendFile(__dirname + '/resources/map.html');
@@ -45,7 +26,7 @@ var distance = 0;
 for(var x = 0; x < flightPlanCoordinates.length; x++) {
 	// distance
 	if(x>0) { // skip first entry
-		distance = getDistanceFromLatLonInKm(flightPlanCoordinates[x-1], flightPlanCoordinates[x]);
+		distance = helper.getDistanceFromLatLonInKm(flightPlanCoordinates[x-1], flightPlanCoordinates[x]);
 		flightPlanCoordinates[x-1].distance = distance;
 		totDistance += distance;
 	}
@@ -85,7 +66,7 @@ function update(step) {
 	//console.log('km to add: ' + diff + ' (' + section + ')');
 	var finalPos = newPos;
 	if(diff>0) {
-		finalPos = interpolate(newPos, nextPos, section);
+		finalPos = helper.interpolate(newPos, nextPos, section);
 	}
 	//console.log('final pos: ' + JSON.stringify(finalPos));
 
