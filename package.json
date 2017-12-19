@@ -1,0 +1,16 @@
+{
+  "name": "realtime-map",
+  "version": "0.0.1",
+  "description": "Realtime Map Application",
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^2.0.4"
+  },
+  "devDependencies": {
+    "nodemon": "^1.13.3"
+  },
+  "scripts": {
+    "start": "node ./index.js",
+    "dev": "nodemon ./index.js"
+  }
+}
