@@ -25,7 +25,7 @@
 				var flightPath = undefined;
 
 				var socket = io();
-				var socket = io('http://127.0.0.1:3000', {reconnection: false});
+				var socket = io('https://secret-chamber-45586.herokuapp.com', {reconnection: false});
 				
 				socket.on('marker set', function(flightPlanCoordinates) {
 					marker = new google.maps.Marker({
