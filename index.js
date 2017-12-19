@@ -1,26 +1,20 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+var express = require('express');
 var helper = require('./helper.js');
 var port = process.env.PORT || 3000;
 
+var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
+
+app.use(express.static('public'));
+
 app.get('/', function(req, res){
-	res.sendFile(__dirname + '/resources/map.html');
+	res.sendFile(__dirname + '/public/html/map.html');
 });
 
-var flightPlanCoordinates = [
-	{lat: 41.27780646738183, lng: -90.439453125},
-	{lat: 41.9022770409637, lng: -90.186767578125},
-	{lat: 42.0737622400872, lng: -89.615478515625},
-	{lat: 42.057450220246814, lng: -88.59375},
-	{lat: 41.631867410697474, lng: -88.385009765625},
-	{lat: 41.054501963290505, lng: -88.604736328125},
-	{lat: 40.65563874006118, lng: -87.275390625},
-	{lat: 41.236511201246216, lng: -86.66015625},
-	{lat: 41.95949009892467, lng: -86.099853515625},
-	{lat: 42.33418438593939, lng: -86.715087890625},
-	{lat: 42.44778143462245, lng: -87.451171875}
-];
+// https://developers.google.com/maps/documentation/javascript/examples/polyline-complex?hl=de
+// JSON.stringify(poly.getPath().getArray())
+var flightPlanCoordinates = [{"lat":47.55120203027912,"lng":7.536739110946655},{"lat":47.55179218678149,"lng":7.538992166519165},{"lat":47.55228458221312,"lng":7.539968490600586},{"lat":47.55289282900606,"lng":7.541647553443909},{"lat":47.55298334131823,"lng":7.5422269105911255},{"lat":47.552552501313286,"lng":7.5446248054504395},{"lat":47.551712534144585,"lng":7.5480687618255615},{"lat":47.55172339587493,"lng":7.548546195030212},{"lat":47.55191166550984,"lng":7.548969984054565},{"lat":47.552581465458296,"lng":7.549651265144348},{"lat":47.552827660044485,"lng":7.550123333930969},{"lat":47.553334527609444,"lng":7.55185067653656},{"lat":47.554058615626445,"lng":7.553867697715759},{"lat":47.55443875783014,"lng":7.554758191108704},{"lat":47.55478269363823,"lng":7.555798888206482},{"lat":47.555090423763566,"lng":7.556324601173401},{"lat":47.55698020914153,"lng":7.558910250663757},{"lat":47.55753771901118,"lng":7.559870481491089},{"lat":47.557798370941185,"lng":7.560760974884033},{"lat":47.5578273321867,"lng":7.561490535736084},{"lat":47.55756668040078,"lng":7.56234347820282},{"lat":47.557153979087865,"lng":7.5639259815216064},{"lat":47.55715759928896,"lng":7.565487027168274}];
 var totDistance = 0;
 var distance = 0;
 for(var x = 0; x < flightPlanCoordinates.length; x++) {
@@ -72,11 +66,11 @@ function update(step) {
 
 	io.emit('marker update', finalPos);
 	if(curPercent==100) {
-		setTimeout(function() { update(-1); }, 200);
+		setTimeout(function() { update(-1); }, 500);
 	} else if(curPercent==0) {
-		setTimeout(function() { update(1); }, 200);
+		setTimeout(function() { update(1); }, 500);
 	} else {
-		setTimeout(function() { update(step); }, 200);
+		setTimeout(function() { update(step); }, 500);
 	}
 }
 update(1);
