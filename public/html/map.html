@@ -21,33 +21,59 @@
 					center: start
 				});
 
-				var marker = undefined;
-				var flightPath = undefined;
+				var markers = [];
+				var lines = [];
 
 				var socket = io();
-				var socket = io('https://secret-chamber-45586.herokuapp.com', {reconnection: false});
+				var socket = io('http://localhost:3000', {
+					reconnection: true,
+					reconnectionDelay: 2000,
+					reconnectionAttempts: Infinity
+				});
 				
-				socket.on('marker set', function(flightPlanCoordinates) {
-					marker = new google.maps.Marker({
-						position: flightPlanCoordinates[0],
+				socket.on('marker set', function(mrk) {
+					// add marker
+					var marker = new google.maps.Marker({
+						position: mrk.waypoints[0],
 						map: map,
 						easing: 'linear', // SlidingMarker
 						duration: 500 // SlidingMarker
 					});
+					markers.push({id:"marker"+mrk.course, marker: marker});
 
-					flightPath = new google.maps.Polyline({
-						path: flightPlanCoordinates,
-						strokeColor: '#FF0000',
-						strokeOpacity: 1.0,
-						strokeWeight: 2
-					});
-					flightPath.setMap(map);
+					// add line
+					var result = $.grep(lines, function(e){ return e.id == "line"+mrk.line; });
+					if(result.length == 0) {
+						var path = new google.maps.Polyline({
+							path: mrk.waypoints,
+							strokeColor: '#0073C0',
+							strokeOpacity: 1.0,
+							strokeWeight: 2
+						});
+						path.setMap(map);
+						lines.push({id:"line"+mrk.line, path:path});
+					}
 				});	
 
-				socket.on('marker update', function(pos) {
-					//console.log(pos);
-					marker.setPosition(pos);
+				socket.on('marker update', function(mrk) {
+					var result = $.grep(markers, function(e){ return e.id == "marker"+mrk.course; });
+					if (result.length == 1) {
+						result[0].marker.setPosition(mrk.pos);
+					}
 					//map.panTo(pos);
+				});
+
+				socket.on('disconnect', function () {
+					// unset all markers
+					$.each(markers, function(i, el) {
+						el.marker.setMap(null);
+					});
+					markers = [];
+					// unset all lines
+					$.each(lines, function(i, el) {
+						el.path.setMap(null);
+					});
+					lines = [];
 				});
 			};
 		</script>
