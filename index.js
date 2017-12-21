@@ -19,7 +19,9 @@ var activeCourses = [];
 activeCourses.push(new course('0601', 0, 1, routes.getRoute("6")));
 activeCourses.push(new course('0602', 10, 1, routes.getRoute("6")));
 activeCourses.push(new course('0603', 90, 1, routes.getRoute("6")));
-activeCourses.push(new course('0604', 100, -1, routes.getRoute("6")));
+activeCourses.push(new course('0801', 100, -1, routes.getRoute("8")));
+activeCourses.push(new course('0201', 40, -1, routes.getRoute("2")));
+activeCourses.push(new course('0301', 60, 1, routes.getRoute("3")));
 
 io.on('connection', function(socket){
 	activeCourses.forEach(function(course) {

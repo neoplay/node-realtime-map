@@ -16,6 +16,7 @@ class course {
 		return {
 			course: this.course,
 			line: this.route.line,
+			color: this.route.color,
 			waypoints: this.route.waypoints
 		};
 	}
