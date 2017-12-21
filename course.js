@@ -2,9 +2,10 @@ var helper = require('./helper.js');
 
 class course {
 
-	constructor(course, curPercent, step, route) {
+	constructor(course, vehicle, curPercent, step, route) {
 
 		this.course = course;
+		this.vehicle = vehicle;
 		this.route = route;
 		this.curPercent = curPercent;
 		this.step = step;
@@ -15,6 +16,7 @@ class course {
 	init() {
 		return {
 			course: this.course,
+			vehicle: this.vehicle,
 			line: this.route.line,
 			color: this.route.color,
 			waypoints: this.route.waypoints
