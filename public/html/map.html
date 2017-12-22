@@ -23,9 +23,9 @@
 
 				var markers = [];
 				var lines = [];
+				var lastWindow = null;
 
-				var socket = io();
-				var socket = io('http://localhost:3000', {
+				var socket = io({
 					reconnection: true,
 					reconnectionDelay: 2000,
 					reconnectionAttempts: Infinity
@@ -40,14 +40,26 @@
 						origin: new google.maps.Point(0, 0),
 						anchor: new google.maps.Point(17, 12)
 					};
+					var infowindow = new google.maps.InfoWindow({
+						content: '<h3>Kurs '+mrk.course+', Linie '+mrk.line+'</h3>'//+
+							//'<p><b>Letzter Halt</b> TODO</p>' +
+							//'<p><b>Nächster Halt</b> TODO</p>' +
+							//'<p><b>Abweichung</b> TODO</p>'
+					});
 					var marker = new google.maps.Marker({
 						position: mrk.waypoints[0],
 						map: map,
 						icon: image,
+						label: {color:'white', fontWeight:'bold', fontSize:'10px', text:mrk.course},
 						easing: 'linear', // SlidingMarker
 						duration: 500 // SlidingMarker
 					});
-					markers.push({id:"marker"+mrk.course, marker: marker});
+					marker.addListener('click', function() {
+						if(lastWindow!=null) lastWindow.close();
+						infowindow.open(map, marker);
+						lastWindow = infowindow;
+					});
+					markers.push({id:"marker"+mrk.course, marker: marker, infowindow: infowindow});
 
 					// add line
 					var result = $.grep(lines, function(e){ return e.id == "line"+mrk.line; });
@@ -67,6 +79,7 @@
 					var result = $.grep(markers, function(e){ return e.id == "marker"+mrk.course; });
 					if (result.length == 1) {
 						result[0].marker.setPosition(mrk.pos);
+						//result[0].infowindow.setContent(''+mrk.diff);
 					}
 					//map.panTo(pos);
 				});

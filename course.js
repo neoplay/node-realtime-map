@@ -24,7 +24,7 @@ class course {
 	}
 
 	update() {
-		this.curPercent += this.step;
+		this.curPercent += this.step*0.5;
 
 		var curPos = this.route.waypoints[this.route.waypoints.length-1].distance_total / 100 * this.curPercent; // calculate new position
 		console.log('course ' + this.course + ' process: ' + this.curPercent + '% (' + curPos + ' km)');
